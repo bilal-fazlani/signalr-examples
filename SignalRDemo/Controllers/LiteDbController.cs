@@ -1,30 +1,33 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
+using System.Linq;
+using System.Threading.Tasks;
 using LiteDB;
 using Microsoft.AspNetCore.Mvc;
 using SignalRDemo.Models;
 
 namespace SignalRDemo.Controllers
 {
-    public abstract class LiteDbController<TCollection> : Controller where TCollection : ILiteDbModel
+    public abstract class LiteDbController<TEntity> : Controller where TEntity : ILiteDbModel
     {
         protected readonly LiteDatabase Db;
 
-        protected readonly LiteCollection<TCollection> Collection;
+        protected readonly LiteCollection<TEntity> Collection;
         
         protected LiteDbController(string collectionName = null)
         {
             // Open database (or create if not exits)
             Db = new LiteDatabase($"Filename={GetType().Assembly.GetName().Name}.db;Mode=Exclusive");
             
-            string effectiveCollectionName = collectionName ?? typeof(TCollection).Name;
+            string effectiveCollectionName = collectionName ?? typeof(TEntity).Name;
             
             // Get employees collection
-            Collection = Db.GetCollection<TCollection>(effectiveCollectionName);
+            Collection = Db.GetCollection<TEntity>(effectiveCollectionName);
         }
         
         [Route("")]
         [HttpGet]
-        public virtual IActionResult GetList()
+        public virtual IActionResult GetListAsync()
         {
             // return list of employees
             return Json(Collection.FindAll().ToList());
@@ -32,22 +35,35 @@ namespace SignalRDemo.Controllers
         
         [Route("")]
         [HttpPost]
-        public virtual IActionResult Upsert([FromBody]TCollection record)
+        public virtual IActionResult UpsertAsync([FromBody] TEntity record)
         {
             // upsert
-            Collection.Upsert(record);
-                
+            bool inserted = Collection.Upsert(record);
+            
+            //invoke subscribed events
+            if (inserted)
+            {
+                OnInserted?.Invoke(this, record);
+            }
+            else
+            {
+                OnUpdated?.Invoke(this, record);
+            }
+
             // return id of saved record
             return Json(new {record.Id});
         }
         
         [Route("")]
         [HttpDelete]
-        public virtual IActionResult Reset()
+        public virtual IActionResult ResetAsync()
         {
             // delete all
             Collection.Delete(x => x.Id > 0);
-                
+            
+            //invoke subscribed events
+            OnReset?.Invoke(this, EventArgs.Empty);
+            
             //return ok
             return Ok();
         }
@@ -57,5 +73,9 @@ namespace SignalRDemo.Controllers
             Db.Dispose();
             base.Dispose(disposing);
         }
+
+        protected event EventHandler<TEntity> OnUpdated;
+        protected event EventHandler<TEntity> OnInserted;
+        protected event EventHandler OnReset;
     }
 }
