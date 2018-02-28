@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
+using Newtonsoft.Json;
 
 namespace SignalRClient
 {
@@ -14,15 +15,27 @@ namespace SignalRClient
             Console.WriteLine("building connection...");
 
             var connection = new HubConnectionBuilder()
-                .WithUrl("http://localhost:5000/score")
+                .WithUrl("http://localhost:5000/employees-hub")
                 .WithConsoleLogger()
                 .Build();
             
             Console.WriteLine("connection built");
 
-            connection.On<string>("updateScore", data =>
+            connection.On<Employee>("employeeUpdated", employee =>
             {
-                Console.Write($"\rScore: {data}");
+                Console.WriteLine("Employee updated : ");
+                Console.WriteLine(JsonConvert.SerializeObject(employee, Formatting.Indented));
+            });
+            
+            connection.On<Employee>("employeeInserted", employee =>
+            {
+                Console.WriteLine("Employee inserted : ");
+                Console.WriteLine(JsonConvert.SerializeObject(employee, Formatting.Indented));
+            });
+            
+            connection.On("employeesReset", () =>
+            {
+                Console.WriteLine("Employees reset");
             });
 
             Console.WriteLine("starting connection...");
@@ -31,14 +44,12 @@ namespace SignalRClient
 
             Console.WriteLine("connection started");
 
-            Console.CursorVisible = false;
             Console.ReadLine();
         }
 
         private static void ConsoleOnCancelKeyPress(object sender, ConsoleCancelEventArgs consoleCancelEventArgs)
         {
             Console.WriteLine("INTERRUPTED");
-            Console.CursorVisible = true;
         }
     }
 }
