@@ -8,9 +8,12 @@ class App extends Component {
         return (
             <div className="App">
                 <header>
+                    &nbsp;
                     <Link to="/">Home</Link>
+                    &nbsp; | &nbsp;
                     <Link to="/about-us">About us</Link>
                 </header>
+                <hr />
                 <main>
                     <Route exact path="/" component={Home}/>
                     <Route exact path="/about-us" component={About}/>
