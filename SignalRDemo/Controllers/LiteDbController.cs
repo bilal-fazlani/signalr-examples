@@ -29,7 +29,7 @@ namespace SignalRDemo.Controllers
         [HttpGet]
         public virtual async Task<IActionResult> GetListAsync()
         {
-            await Task.Delay(TimeSpan.FromSeconds(3));
+            await Task.Delay(TimeSpan.FromSeconds(1));
             
             // return list of employees
             return Json(Collection.FindAll().ToList());
@@ -39,7 +39,7 @@ namespace SignalRDemo.Controllers
         [HttpGet]
         public virtual async Task<IActionResult> GetEmployeeAsync(int id)
         {
-            await Task.Delay(TimeSpan.FromSeconds(3));
+            await Task.Delay(TimeSpan.FromSeconds(1));
 
             TEntity record = Collection.Find(x => x.Id == id).FirstOrDefault();
 
@@ -56,7 +56,7 @@ namespace SignalRDemo.Controllers
         [HttpDelete]
         public virtual async Task<IActionResult> DeleteEmployeeAsync(int id)
         {
-            await Task.Delay(TimeSpan.FromSeconds(3));
+            await Task.Delay(TimeSpan.FromSeconds(1));
 
             TEntity record = Collection.Find(x => x.Id == id).FirstOrDefault();
 
@@ -71,8 +71,10 @@ namespace SignalRDemo.Controllers
         
         [Route("")]
         [HttpPost]
-        public virtual IActionResult UpsertAsync([FromBody] TEntity record)
+        public virtual async Task<IActionResult> UpsertAsync([FromBody] TEntity record)
         {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            
             // upsert
             bool inserted = Collection.Upsert(record);
             
