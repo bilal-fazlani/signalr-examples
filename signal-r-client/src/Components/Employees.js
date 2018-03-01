@@ -1,12 +1,13 @@
 import React from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
-import {getEmployeesAsync} from "../reducers/employees";
+import {loadEmployeesAsync} from "../reducers/employees";
+import {Link} from "react-router-dom";
 
 class Employees extends React.Component {
 
     async componentWillMount(){
-        await this.props.getEmployeesAsync();
+        await this.props.loadEmployeesAsync();
     }
 
     render() {
@@ -20,6 +21,7 @@ class Employees extends React.Component {
                         <th>Id</th>
                         <th>Name</th>
                         <th>Age</th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -28,6 +30,7 @@ class Employees extends React.Component {
                             <td>{emp.id}</td>
                             <td>{emp.name}</td>
                             <td>{emp.age}</td>
+                            <th><Link to={"/employee/"+emp.id}>details</Link></th>
                         </tr>)
                     }
                     </tbody>
@@ -38,7 +41,6 @@ class Employees extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.info('state', state);
 
     const hasData = (state.employees !== undefined &&
         state.employees.data !== undefined &&
@@ -54,7 +56,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    getEmployeesAsync
+    loadEmployeesAsync
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Employees);
