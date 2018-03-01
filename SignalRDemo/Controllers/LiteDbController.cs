@@ -35,6 +35,23 @@ namespace SignalRDemo.Controllers
             return Json(Collection.FindAll().ToList());
         }
         
+        [Route("{id}")]
+        [HttpGet]
+        public virtual async Task<IActionResult> GetEmployeeAsync(int id)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+
+            TEntity record = Collection.Find(x => x.Id == id).FirstOrDefault();
+
+            if (record != null)
+            {
+                // find and return employee
+                return Json(record);
+            }
+
+            return NotFound();
+        }
+        
         [Route("")]
         [HttpPost]
         public virtual IActionResult UpsertAsync([FromBody] TEntity record)
