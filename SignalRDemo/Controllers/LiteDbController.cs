@@ -52,6 +52,23 @@ namespace SignalRDemo.Controllers
             return NotFound();
         }
         
+        [Route("{id}")]
+        [HttpDelete]
+        public virtual async Task<IActionResult> DeleteEmployeeAsync(int id)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+
+            TEntity record = Collection.Find(x => x.Id == id).FirstOrDefault();
+
+            if (record != null)
+            {
+                Collection.Delete(id);
+                OnDeleted?.Invoke(this, id);
+            }
+
+            return NotFound();
+        }
+        
         [Route("")]
         [HttpPost]
         public virtual IActionResult UpsertAsync([FromBody] TEntity record)
@@ -95,6 +112,7 @@ namespace SignalRDemo.Controllers
 
         protected event EventHandler<TEntity> OnUpdated;
         protected event EventHandler<TEntity> OnInserted;
+        protected event EventHandler<int> OnDeleted;
         protected event EventHandler OnReset;
     }
 }

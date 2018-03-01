@@ -16,7 +16,13 @@ namespace SignalRDemo.Controllers
             _hubContext = hubContext;
             OnUpdated += OnEmployeeUpdated;
             OnInserted += OnEmployeeInserted;
+            OnDeleted += OnEmployeeDeleted;
             OnReset += OnEmployeesReset;
+        }
+
+        private async void OnEmployeeDeleted(object sender, int employeeId)
+        {
+            await _hubContext.Clients.All.SendAsync("employeeDeleted", employeeId);
         }
 
         private async void OnEmployeesReset(object sender, EventArgs args)
@@ -38,6 +44,7 @@ namespace SignalRDemo.Controllers
         {
             OnUpdated -= OnEmployeeUpdated;
             OnInserted -= OnEmployeeInserted;
+            OnDeleted -= OnEmployeeDeleted;
             OnReset -= OnEmployeesReset;
             base.Dispose(disposing);
         }
