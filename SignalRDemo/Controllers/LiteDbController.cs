@@ -27,8 +27,10 @@ namespace SignalRDemo.Controllers
         
         [Route("")]
         [HttpGet]
-        public virtual IActionResult GetListAsync()
+        public virtual async Task<IActionResult> GetListAsync()
         {
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            
             // return list of employees
             return Json(Collection.FindAll().ToList());
         }

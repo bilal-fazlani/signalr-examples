@@ -23,6 +23,20 @@ namespace SignalRDemo
             services.AddSingleton<ScoreTicker>();
             
             services.AddSignalR();
+            
+            services.AddCors(options =>
+                {
+                    options.AddPolicy("AllowAll",
+                        builder =>
+                        {
+                            builder
+                            .AllowAnyOrigin() 
+                            .AllowAnyMethod()
+                            .AllowAnyHeader()
+                            .AllowCredentials();
+                        });
+                });
+            
             services.AddMvc().AddJsonOptions(opts =>
             {
                 opts.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -38,6 +52,7 @@ namespace SignalRDemo
                 routes.MapHub<EmployeesHub>("/employees-hub");
             });
             
+            app.UseCors("AllowAll");
             app.UseMvc();
         }
     }
