@@ -33,6 +33,7 @@ class AddEmployee extends React.Component {
                     </div>
                     <div>
                         <button type="submit" disabled={pristine || submitting || adding}>Save</button>
+                        &nbsp;
                         <button type="button" disabled={pristine || submitting || adding} onClick={reset}>Clear</button>
                     </div>
 

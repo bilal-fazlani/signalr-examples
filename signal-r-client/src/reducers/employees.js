@@ -1,13 +1,13 @@
 import {
-    ADD_EMPLOYEE_REQUESTED, EMPLOYEE_ADDED, EMPLOYEE_LOADED, EMPLOYEE_REQUESTED, EMPLOYEES_LOADED,
+    ADD_EMPLOYEE_REQUESTED, EDIT_EMPLOYEE_REQUESTED, EMPLOYEE_ADDED, EMPLOYEE_EDITED, EMPLOYEE_LOADED,
+    EMPLOYEE_REQUESTED,
+    EMPLOYEES_LOADED,
     EMPLOYEES_REQUESTED
 } from "../constants";
 
 import {config} from '../config';
 
 import { push } from 'react-router-redux'
-
-//import store from '../store';
 
 /*
 employees : {
@@ -35,6 +35,20 @@ export default (state = {}, action) => {
             if (!addedState.data) addedState.data = [];
             addedState.data.push(action.employee);
             return addedState;
+        case EDIT_EMPLOYEE_REQUESTED:
+            return {...state, editing: true};
+        case EMPLOYEE_EDITED:
+            const editedState = {...state, editing: false};
+            if (!editedState.data) {
+                editedState.data = [];
+                editedState.data.push(action.employee);
+                return editedState;
+            }
+            else{
+                let newData = editedState.data.filter(x=>x.id !== action.employee.id);
+                newData.push(action.employee);
+                return {...editedState, data:newData};
+            }
         default:
             return state;
     }
@@ -98,6 +112,33 @@ export const addNewEmployeeAsync = (e) => {
         dispatch({
             type: EMPLOYEE_ADDED,
             employee: {...values, id}
+        });
+
+        dispatch(push('/'));
+    }
+};
+
+export const editEmployeeAsync = (e) => {
+    return async (dispatch, getState) => {
+        e.preventDefault();
+        dispatch({
+            type: EDIT_EMPLOYEE_REQUESTED
+        });
+        const form = getState().form;
+
+        const values = form['edit-employee-form'].values;
+
+        const response = await fetch(config.apiBaseUrl + '/employees', {
+            method: 'post',
+            body: JSON.stringify(values),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        dispatch({
+            type: EMPLOYEE_EDITED,
+            employee: values
         });
 
         dispatch(push('/'));
