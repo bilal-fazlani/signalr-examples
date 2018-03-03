@@ -7,7 +7,7 @@ import {bindActionCreators} from "redux";
 class EditEmployee extends React.Component {
 
     async componentWillMount() {
-        if (!this.props.employee) {
+        if (!this.props.initialValues) {
             await this.props.loadEmployeeAsync(this.props.employeeId);
         }
     }
@@ -42,6 +42,7 @@ class EditEmployee extends React.Component {
                         </div>
                     </div>
                     <div>
+                        <br/>
                         <button type="submit" disabled={pristine || submitting || editing}>Save</button>
                         &nbsp;
                         <button type="button" disabled={pristine || submitting || editing} onClick={reset}>Clear</button>
