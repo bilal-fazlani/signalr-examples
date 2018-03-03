@@ -33,7 +33,7 @@ export default (state = {}, action) => {
         case ADD_EMPLOYEE_REQUESTED:
             return {...state, adding: true};
         case EMPLOYEE_ADDED:
-            const addedState = {...state, adding: false};
+            const addedState = {...state, adding: false, data : [...state.data]};
             if (!addedState.data) addedState.data = [];
             addedState.data.push(action.employee);
             return addedState;

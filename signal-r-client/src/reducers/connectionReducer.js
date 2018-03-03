@@ -1,13 +1,13 @@
-import {SOCKET_CONNECTED, SOCKET_DISCONNECTED} from "../constants";
+import {EMPLOYEE_ADDED, EMPLOYEE_DELETED, EMPLOYEE_EDITED, SOCKET_CONNECTED, SOCKET_DISCONNECTED} from "../constants";
 import {config} from "../config";
 import {HubConnection} from "@aspnet/signalr/dist/esm/index";
 
-export default (state = {}, action) =>{
-    switch (action.type){
+export default (state = {}, action) => {
+    switch (action.type) {
         case SOCKET_CONNECTED:
-            return {...state, connected : true, connectionId : action.connectionId};
+            return {...state, connected: true, connectionId: action.connectionId};
         case SOCKET_DISCONNECTED:
-            return {connected : false};
+            return {connected: false};
         default:
             return state;
     }
@@ -30,15 +30,27 @@ export const connectToSocketAsync = () => {
         });
 
         connection.on('employeeUpdated', employee => {
-            console.info('employee updated',employee);
+            dispatch({
+                type: EMPLOYEE_EDITED,
+                employee
+            });
+            //console.info('employee updated',employee);
         });
 
         connection.on('employeeCreated', employee => {
-            console.info('employee inserted',employee);
+            dispatch({
+                type: EMPLOYEE_ADDED,
+                employee
+            });
+            //console.info('employee inserted', employee);
         });
 
         connection.on('employeeDeleted', employeeId => {
-            console.info('employee deleted: ' + employeeId);
+            //console.info('employee deleted: ' + employeeId);
+            dispatch({
+                type: EMPLOYEE_DELETED,
+                id : employeeId
+            })
         });
     };
 };
