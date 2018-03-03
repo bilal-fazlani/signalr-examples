@@ -1,5 +1,7 @@
 import {
-    ADD_EMPLOYEE_REQUESTED, EDIT_EMPLOYEE_REQUESTED, EMPLOYEE_ADDED, EMPLOYEE_EDITED, EMPLOYEE_LOADED,
+    ADD_EMPLOYEE_REQUESTED, DELETE_EMPLOYEE_REQUESTED, EDIT_EMPLOYEE_REQUESTED, EMPLOYEE_ADDED, EMPLOYEE_DELETED,
+    EMPLOYEE_EDITED,
+    EMPLOYEE_LOADED,
     EMPLOYEE_REQUESTED,
     EMPLOYEES_LOADED,
     EMPLOYEES_REQUESTED
@@ -7,7 +9,7 @@ import {
 
 import {config} from '../config';
 
-import { push } from 'react-router-redux'
+import {push} from 'react-router-redux'
 
 /*
 employees : {
@@ -44,11 +46,20 @@ export default (state = {}, action) => {
                 editedState.data.push(action.employee);
                 return editedState;
             }
-            else{
-                let newData = editedState.data.filter(x=>x.id !== action.employee.id);
+            else {
+                let newData = editedState.data.filter(x => x.id !== action.employee.id);
                 newData.push(action.employee);
-                return {...editedState, data:newData};
+                return {...editedState, data: newData};
             }
+        case DELETE_EMPLOYEE_REQUESTED:
+            return {...state, deleting: true};
+        case EMPLOYEE_DELETED:
+            const deletedState = {...state, deleting: false};
+            if (deletedState.data === undefined) {
+                deletedState.data = [];
+            }
+            deletedState.data = deletedState.data.filter(x=> x.id !== action.id);
+            return deletedState;
         default:
             return state;
     }
@@ -139,6 +150,28 @@ export const editEmployeeAsync = (e) => {
         dispatch({
             type: EMPLOYEE_EDITED,
             employee: values
+        });
+
+        dispatch(push('/'));
+    }
+};
+
+export const deleteEmployeeAsync = (id) => {
+    return async (dispatch) => {
+        dispatch({
+            type: DELETE_EMPLOYEE_REQUESTED
+        });
+
+        await fetch(config.apiBaseUrl + '/employees/' + id, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        dispatch({
+            type: EMPLOYEE_DELETED,
+            id
         });
 
         dispatch(push('/'));
