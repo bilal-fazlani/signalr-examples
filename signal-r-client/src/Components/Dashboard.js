@@ -3,16 +3,17 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {loadEmployeesAsync} from "../reducers/employees";
 import {Link} from "react-router-dom";
+import {HubConnection} from '@aspnet/signalr'
+import {config} from '../config';
+import employees from "../reducers/employees";
 
 class Dashboard extends React.Component {
 
     async componentWillMount(){
+        //loading data only first time
         if(this.props.shouldLoadEmployees){
             await this.props.loadEmployeesAsync();
         }
-
-        //here we will connect to signal r hub
-        //todo: add socket connection here
     }
 
     render() {
