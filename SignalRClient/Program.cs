@@ -33,6 +33,11 @@ namespace SignalRClient
                 Console.WriteLine(JsonConvert.SerializeObject(employee, Formatting.Indented));
             });
             
+            connection.On<int>("employeeDeleted", employeeId =>
+            {
+                Console.WriteLine("Employee deleted : " + employeeId);
+            });
+            
             connection.On("employeesReset", () =>
             {
                 Console.WriteLine("Employees reset");
