@@ -7,7 +7,12 @@ import {Link} from "react-router-dom";
 class Dashboard extends React.Component {
 
     async componentWillMount(){
-        await this.props.loadEmployeesAsync();
+        if(this.props.shouldLoadEmployees){
+            await this.props.loadEmployeesAsync();
+        }
+
+        //here we will connect to signal r hub
+        //todo: add socket connection here
     }
 
     render() {
@@ -51,10 +56,13 @@ const mapStateToProps = (state) => {
 
     const isLoadingEmployees = state.employees.loading;
 
+    const shouldLoadEmployees = state.employees === undefined || state.employees.data === undefined;
+
     return {
         employees: state.employees.data,
         hasData,
-        isLoadingEmployees
+        isLoadingEmployees,
+        shouldLoadEmployees
     };
 };
 

@@ -58,7 +58,7 @@ export default (state = {}, action) => {
             if (deletedState.data === undefined) {
                 deletedState.data = [];
             }
-            deletedState.data = deletedState.data.filter(x=> x.id !== action.id);
+            deletedState.data = deletedState.data.filter(x=> x.id != action.id);
             return deletedState;
         default:
             return state;
@@ -118,7 +118,7 @@ export const addNewEmployeeAsync = (e) => {
             }
         });
 
-        const id = await response.json().id;
+        const id = (await response.json()).id;
 
         dispatch({
             type: EMPLOYEE_ADDED,
