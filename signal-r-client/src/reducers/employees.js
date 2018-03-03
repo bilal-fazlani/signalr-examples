@@ -128,7 +128,7 @@ export const editEmployeeAsync = (e) => {
 
         const values = form['edit-employee-form'].values;
 
-        const response = await fetch(config.apiBaseUrl + '/employees', {
+        await fetch(config.apiBaseUrl + '/employees', {
             method: 'post',
             body: JSON.stringify(values),
             headers: {

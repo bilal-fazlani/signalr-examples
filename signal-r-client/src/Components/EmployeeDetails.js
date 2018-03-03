@@ -25,7 +25,11 @@ class EmployeeDetails extends React.Component {
                 </div>
                 <div>
                     <br/>
-                    <Link to={'/employee/' + this.props.employeeId + '/edit'}>Edit</Link>
+                    <Link to={'/employee/' + this.props.employeeId + '/edit'} >
+                        <button>Edit</button>
+                    </Link>
+                    &nbsp;
+                    <button>Delete</button>
                 </div>
             </div>
         }
