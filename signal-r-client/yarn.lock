@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@aspnet/signalr@^1.0.0-preview1-final":
+  version "1.0.0-preview1-final"
+  resolved "https://registry.yarnpkg.com/@aspnet/signalr/-/signalr-1.0.0-preview1-final.tgz#78695350d21284c54ade8f2d3e85c777c4538cae"
+
 "@types/jss@^9.3.0":
   version "9.3.0"
   resolved "https://registry.yarnpkg.com/@types/jss/-/jss-9.3.0.tgz#0f8484fd03ded206917be27b58217f274a0ad59f"

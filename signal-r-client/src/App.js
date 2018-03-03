@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {Link, Route} from "react-router-dom";
-import Home from "./Components/Home";
 import About from "./Components/About";
 import EmployeeDetails from "./Components/EmployeeDetails";
 import AddEmployee from "./Components/AddEmployee";
 import EditEmployee from "./Components/EditEmployee";
+import Dashboard from "./Components/Dashboard";
 
 class App extends Component {
     render() {
@@ -20,7 +20,7 @@ class App extends Component {
                 </header>
                 <hr />
                 <main>
-                    <Route exact path="/" component={Home}/>
+                    <Route exact path="/" component={Dashboard}/>
                     <Route exact path="/about" component={About}/>
                     <Route exact path="/add-new-employee" component={AddEmployee}/>
                     <Route exact path="/employee/:id" component={EmployeeDetails}/>

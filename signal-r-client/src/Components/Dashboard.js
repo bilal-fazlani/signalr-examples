@@ -4,7 +4,7 @@ import {bindActionCreators} from "redux";
 import {loadEmployeesAsync} from "../reducers/employees";
 import {Link} from "react-router-dom";
 
-class Employees extends React.Component {
+class Dashboard extends React.Component {
 
     async componentWillMount(){
         await this.props.loadEmployeesAsync();
@@ -12,6 +12,9 @@ class Employees extends React.Component {
 
     render() {
         return <div>
+            <h1>
+                Dashboard
+            </h1>
             {
                 this.props.isLoadingEmployees ? <div>
                     Loading...
@@ -59,4 +62,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({
     loadEmployeesAsync
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Employees);
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
