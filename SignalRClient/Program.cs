@@ -27,7 +27,7 @@ namespace SignalRClient
                 Console.WriteLine(JsonConvert.SerializeObject(employee, Formatting.Indented));
             });
             
-            connection.On<Employee>("employeeInserted", employee =>
+            connection.On<Employee>("employeeCreated", employee =>
             {
                 Console.WriteLine("Employee inserted : ");
                 Console.WriteLine(JsonConvert.SerializeObject(employee, Formatting.Indented));

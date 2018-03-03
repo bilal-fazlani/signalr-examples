@@ -115,6 +115,7 @@ export const addNewEmployeeAsync = (e) => {
             body: JSON.stringify(values),
             headers: {
                 'Content-Type': 'application/json',
+                'socketConnectionId' : getState().socketConnection.connectionId
             }
         });
 
@@ -144,6 +145,7 @@ export const editEmployeeAsync = (e) => {
             body: JSON.stringify(values),
             headers: {
                 'Content-Type': 'application/json',
+                'socketConnectionId' : getState().socketConnection.connectionId
             }
         });
 
@@ -157,7 +159,7 @@ export const editEmployeeAsync = (e) => {
 };
 
 export const deleteEmployeeAsync = (id) => {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         dispatch({
             type: DELETE_EMPLOYEE_REQUESTED
         });
@@ -166,6 +168,7 @@ export const deleteEmployeeAsync = (id) => {
             method: 'delete',
             headers: {
                 'Content-Type': 'application/json',
+                'socketConnectionId' : getState().socketConnection.connectionId
             }
         });
 

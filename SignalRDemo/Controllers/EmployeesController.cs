@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using LiteDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SignalRDemo.Hubs;
@@ -7,45 +11,87 @@ using SignalRDemo.Models;
 namespace SignalRDemo.Controllers
 {
     [Route("/employees")]
-    public class EmployeesController : LiteDbController<Employee>
+    public class EmployeesController : Controller
     {
         private readonly IHubContext<EmployeesHub> _hubContext;
+        
+        private readonly LiteDatabase Db;
 
+        private readonly LiteCollection<Employee> Collection;
+        
         public EmployeesController(IHubContext<EmployeesHub> hubContext)
         {
             _hubContext = hubContext;
-            OnUpdated += OnEmployeeUpdated;
-            OnInserted += OnEmployeeInserted;
-            OnDeleted += OnEmployeeDeleted;
-            OnReset += OnEmployeesReset;
-        }
-
-        private async void OnEmployeeDeleted(object sender, int employeeId)
-        {
-            await _hubContext.Clients.All.SendAsync("employeeDeleted", employeeId);
-        }
-
-        private async void OnEmployeesReset(object sender, EventArgs args)
-        {
-            await _hubContext.Clients.All.SendAsync("employeesReset");
-        }
-
-        private async void OnEmployeeUpdated(object sender, Employee employee)
-        {
-            await _hubContext.Clients.All.SendAsync("employeeUpdated", employee);
+            
+            // Open database (or create if not exits)
+            Db = new LiteDatabase($"Filename={GetType().Assembly.GetName().Name}.db;Mode=Exclusive");
+            
+            // Get employees collection
+            Collection = Db.GetCollection<Employee>(typeof(Employee).Name);
         }
         
-        private async void OnEmployeeInserted(object sender, Employee employee)
-        {
-            await _hubContext.Clients.All.SendAsync("employeeInserted", employee);
+        [Route("")]
+        [HttpGet]
+        public IActionResult GetListAsync([FromHeader]string socketConnectionId = null)
+        {            
+            // return list of employees
+            return Json(Collection.FindAll().ToList());
         }
+        
+        [Route("{id}")]
+        [HttpGet]
+        public IActionResult GetEmployeeAsync(int id, [FromHeader]string socketConnectionId = null)
+        {
+            Employee record = Collection.FindById(id);
 
+            if (record != null)
+            {
+                // find and return employee
+                return Json(record);
+            }
+
+            return NotFound();
+        }
+        
+        [Route("{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteEmployeeAsync(int id, [FromHeader]string socketConnectionId = null)
+        {
+            bool deleted = Collection.Delete(id);
+            if (deleted)
+            {
+                await _hubContext.Clients
+                    .AllExcept(new List<string>(){socketConnectionId})
+                    .SendAsync("employeeDeleted", id);
+                
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+        
+        [Route("")]
+        [HttpPost]
+        public async Task<IActionResult> UpsertAsync([FromBody] Employee record, [FromHeader]string socketConnectionId = null)
+        {            
+            // upsert
+            bool inserted = Collection.Upsert(record);
+
+            string notification = inserted ? "employeeCreated" : "employeeUpdated";
+            
+            await _hubContext.Clients
+                .AllExcept(new List<string>(){socketConnectionId})
+                .SendAsync(notification, record);
+            
+            // return id of saved record
+            return Json(new {record.Id});
+        }
+        
         protected override void Dispose(bool disposing)
         {
-            OnUpdated -= OnEmployeeUpdated;
-            OnInserted -= OnEmployeeInserted;
-            OnDeleted -= OnEmployeeDeleted;
-            OnReset -= OnEmployeesReset;
+            Db?.Dispose();
             base.Dispose(disposing);
         }
     }

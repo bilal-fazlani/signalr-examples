@@ -3,9 +3,6 @@ import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import {loadEmployeesAsync} from "../reducers/employees";
 import {Link} from "react-router-dom";
-import {HubConnection} from '@aspnet/signalr'
-import {config} from '../config';
-import employees from "../reducers/employees";
 
 class Dashboard extends React.Component {
 

@@ -1,33 +1,21 @@
 import React, {Component} from 'react';
-import {Link, Route} from "react-router-dom";
+import {Link, Route, withRouter} from "react-router-dom";
 import About from "./Components/About";
 import EmployeeDetails from "./Components/EmployeeDetails";
 import AddEmployee from "./Components/AddEmployee";
 import EditEmployee from "./Components/EditEmployee";
 import Dashboard from "./Components/Dashboard";
-import {config} from "./config";
-import {HubConnection} from "@aspnet/signalr/dist/esm/index";
+import {bindActionCreators} from "redux";
+import {connectToSocketAsync} from "./reducers/connectionReducer";
+import {connect} from "react-redux";
 
 class App extends Component {
 
     async componentWillMount(){
-        //here we will connect to signal r hub
-        const connection = new HubConnection(config.apiBaseUrl + '/employees-hub');
-
-        await connection.start();
-        console.info('connection started');
-
-        connection.on('employeeUpdated', employee => {
-            console.info('employee updated',employee);
-        });
-
-        connection.on('employeeInserted', employee => {
-            console.info('employee inserted',employee);
-        });
-
-        connection.on('employeeDeleted', employeeId => {
-            console.info('employee deleted: ' + employeeId);
-        });
+        if(this.props.socketConnected !== true)
+        {
+            await this.props.connectToSocketAsync();
+        }
     }
 
     render() {
@@ -54,4 +42,15 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        socketConnected : state.socketConnection.connected
+    };
+};
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+    connectToSocketAsync
+}, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
+

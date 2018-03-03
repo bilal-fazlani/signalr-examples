@@ -18,10 +18,7 @@ namespace SignalRDemo
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddSingleton<Score>();
-            services.AddSingleton<ScoreTicker>();
-            
+        {            
             services.AddSignalR();
             
             services.AddCors(options =>
@@ -50,7 +47,6 @@ namespace SignalRDemo
             
             app.UseSignalR(routes =>
             {
-                routes.MapHub<Score>("/score");
                 routes.MapHub<EmployeesHub>("/employees-hub");
             });
 
