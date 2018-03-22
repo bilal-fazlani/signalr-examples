@@ -1,4 +1,4 @@
-﻿namespace SignalRDemo.Models
+﻿namespace SignalRServer.Models
 {
     public interface ILiteDbModel
     {

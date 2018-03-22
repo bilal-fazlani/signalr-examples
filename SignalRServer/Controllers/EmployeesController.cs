@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using SignalRDemo.Hubs;
-using SignalRDemo.Models;
+using SignalRServer.Hubs;
+using SignalRServer.Models;
 
-namespace SignalRDemo.Controllers
+namespace SignalRServer.Controllers
 {
     [Route("/employees")]
     public class EmployeesController : Controller

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
-using SignalRDemo.Hubs;
+using SignalRServer.Hubs;
 
-namespace SignalRDemo
+namespace SignalRServer
 {
     public class Startup
     {
