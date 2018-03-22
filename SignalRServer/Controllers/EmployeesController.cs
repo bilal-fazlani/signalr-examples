@@ -66,10 +66,7 @@ namespace SignalRDemo.Controllers
                 
                 return Ok();
             }
-            else
-            {
-                return NotFound();
-            }
+            return NotFound();
         }
         
         [Route("")]
